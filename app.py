@@ -67,10 +67,23 @@ def create_user(username, password):
         "created_at": datetime.utcnow(),
     })
 
-# ─── Seed default accounts if collection is empty ────────────────────────────
-if users_col.count_documents({}) == 0:
-    create_user("admin",  "admin123")
-    create_user("doctor", "doctor123")
+# ─── Seed default accounts (lazily) ──────────────────────────────────────────
+_seeded = False
+def seed_if_needed():
+    global _seeded
+    if not _seeded:
+        try:
+            if users_col.count_documents({}, limit=1) == 0:
+                print("Seeding default accounts...")
+                create_user("admin",  "admin123")
+                create_user("doctor", "doctor123")
+            _seeded = True
+        except Exception as e:
+            print(f"⚠️ MongoDB Seed Warning: {e}")
+
+@app.before_request
+def check_seed():
+    seed_if_needed()
 
 # ─── History helpers ──────────────────────────────────────────────────────────
 def add_to_history(username, inputs, result, result_type, probability):
