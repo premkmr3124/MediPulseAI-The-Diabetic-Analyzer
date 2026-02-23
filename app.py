@@ -27,7 +27,6 @@ client     = MongoClient(
     server_api=ServerApi('1'),
     tls=True,
     tlsCAFile=certifi.where(),
-    tlsAllowInvalidCertificates=True
 )
 db         = client["medipulse"]            # database name
 users_col  = db["users"]                    # collection: users
@@ -242,5 +241,4 @@ def predict():
                                result_type="error"), 500
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
