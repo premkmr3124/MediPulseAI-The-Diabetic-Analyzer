@@ -27,6 +27,7 @@ client     = MongoClient(
     server_api=ServerApi('1'),
     tls=True,
     tlsCAFile=certifi.where(),
+    tlsAllowInvalidCertificates=True
 )
 db         = client["medipulse"]            # database name
 users_col  = db["users"]                    # collection: users
