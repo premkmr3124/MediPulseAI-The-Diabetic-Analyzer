@@ -11,6 +11,7 @@ from flask_login import (LoginManager, UserMixin, login_user,
 from werkzeug.security import generate_password_hash, check_password_hash
 from tensorflow.keras.models import load_model
 from pymongo import MongoClient, DESCENDING
+import certifi
 
 # ─── Load environment variables (.env file) ───────────────────────────────────
 load_dotenv()
@@ -20,7 +21,7 @@ app.secret_key = os.getenv("SECRET_KEY", "medipulse-secret-change-in-prod")
 
 # ─── MongoDB Atlas connection ─────────────────────────────────────────────────
 MONGO_URI = os.getenv("MONGO_URI")          # set in .env
-client     = MongoClient(MONGO_URI)
+client     = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 db         = client["medipulse"]            # database name
 users_col  = db["users"]                    # collection: users
 history_col= db["history"]                  # collection: history
