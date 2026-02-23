@@ -195,10 +195,10 @@ def predict():
 
         raw        = np.array([[gender_enc, age, hypertension, heart_disease,
                                 smoking_enc, bmi, hba1c, glucose]])
-        raw_scaled = scaler.transform(raw)
         
         # Scikit-learn LogisticRegression returns [[prob_negative, prob_positive]]
-        prediction_proba = model.predict_proba(raw_scaled)
+        # Pass raw unscaled data since the model expects it based on its intercept
+        prediction_proba = model.predict_proba(raw)
         probability = round(float(prediction_proba[0][1]) * 100, 1)
 
         result_type = "diabetic" if probability >= 50 else "not_diabetic"
