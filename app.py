@@ -9,7 +9,7 @@ from flask import Flask, request, render_template, redirect, url_for
 from flask_login import (LoginManager, UserMixin, login_user,
                          logout_user, login_required, current_user)
 from werkzeug.security import generate_password_hash, check_password_hash
-from tensorflow.keras.models import load_model
+import joblib
 from pymongo import MongoClient, DESCENDING
 from pymongo.server_api import ServerApi
 import certifi
@@ -108,7 +108,7 @@ def clear_user_history(username):
     history_col.delete_many({"username": username})
 
 # ─── ML model & preprocessors ────────────────────────────────────────────────
-model = load_model(os.path.join(BASE_DIR, "model.h5"), compile=False)
+model = joblib.load(os.path.join(BASE_DIR, "model.pkl"))
 le_gen   = joblib.load(os.path.join(BASE_DIR, "le_gender.pkl"))
 le_smoke = joblib.load(os.path.join(BASE_DIR, "le_smoking.pkl"))
 scaler   = joblib.load(os.path.join(BASE_DIR, "scaler.pkl"))
@@ -196,8 +196,10 @@ def predict():
         raw        = np.array([[gender_enc, age, hypertension, heart_disease,
                                 smoking_enc, bmi, hba1c, glucose]])
         raw_scaled = scaler.transform(raw)
-        prediction = model.predict(raw_scaled)
-        probability = round(float(prediction[0][0]) * 100, 1)
+        
+        # Scikit-learn LogisticRegression returns [[prob_negative, prob_positive]]
+        prediction_proba = model.predict_proba(raw_scaled)
+        probability = round(float(prediction_proba[0][1]) * 100, 1)
 
         result_type = "diabetic" if probability >= 50 else "not_diabetic"
         result      = ("⚠️ High Diabetes Risk Detected"
