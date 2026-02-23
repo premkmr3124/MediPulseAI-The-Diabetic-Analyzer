@@ -108,7 +108,7 @@ def clear_user_history(username):
     history_col.delete_many({"username": username})
 
 # ─── ML model & preprocessors ────────────────────────────────────────────────
-model    = load_model(os.path.join(BASE_DIR, "diabetes_ann_smote_model.keras"))
+model = load_model(os.path.join(BASE_DIR, "model.h5"))
 le_gen   = joblib.load(os.path.join(BASE_DIR, "le_gender.pkl"))
 le_smoke = joblib.load(os.path.join(BASE_DIR, "le_smoking.pkl"))
 scaler   = joblib.load(os.path.join(BASE_DIR, "scaler.pkl"))
