@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: medipulse-ai
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: MONGO_URI
+        sync: false        # set manually in Render dashboard
+      - key: SECRET_KEY
+        sync: false        # set manually in Render dashboard
+      - key: PYTHON_VERSION
+        value: 3.11.0

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MediPulseAI | Diabetes Risk Analysis</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1773cf",
+                        "primary-glow": "#4aa0f5",
+                        "background-light": "#f0f4f8",
+                        "background-dark": "#0f172a",
+                        "accent-success": "#10b981",
+                        "accent-warning": "#f43f5e",
+                        "glass-border": "rgba(255,255,255,0.4)",
+                        "glass-surface": "rgba(255,255,255,0.65)",
+                        "glass-input": "rgba(255,255,255,0.5)",
+                    },
+                    fontFamily: { "display": ["Manrope", "sans-serif"] },
+                    boxShadow: {
+                        "glass": "0 8px 32px 0 rgba(31,38,135,0.15)",
+                        "glass-sm": "0 4px 16px 0 rgba(31,38,135,0.08)",
+                        "inner-glow": "inset 0 0 12px 0 rgba(255,255,255,0.6)",
+                        "input-focus": "0 0 0 2px rgba(23,115,207,0.3), inset 0 0 8px rgba(23,115,207,0.1)",
+                    },
+                    backgroundImage: {
+                        'glass-gradient': 'linear-gradient(135deg,rgba(255,255,255,0.8),rgba(255,255,255,0.4))',
+                        'button-shine': 'linear-gradient(45deg,rgba(255,255,255,0) 40%,rgba(255,255,255,0.2) 50%,rgba(255,255,255,0) 60%)',
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        /* --- Glass panel --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+        }
+
+        .dark .glass-panel {
+            background: rgba(17, 25, 33, 0.70);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+        }
+
+        /* --- Glass inputs / selects --- */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+            color: #1e293b !important;
+            color-scheme: light;
+        }
+
+        .dark .glass-input {
+            background: rgba(15, 23, 42, 0.85) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #e2e8f0 !important;
+            color-scheme: dark;
+        }
+
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 0 0 2px rgba(23, 115, 207, 0.25), inset 0 0 10px rgba(23, 115, 207, 0.05);
+            outline: none;
+            color: #0f172a !important;
+        }
+
+        .dark .glass-input:focus {
+            background: rgba(15, 23, 60, 0.98) !important;
+            color: #f1f5f9 !important;
+            box-shadow: 0 0 0 2px rgba(74, 160, 245, 0.45) !important;
+        }
+
+        /* Override browser autofill white/yellow background */
+        .glass-input:-webkit-autofill,
+        .glass-input:-webkit-autofill:hover,
+        .glass-input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.95) inset !important;
+            -webkit-text-fill-color: #1e293b !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        .dark .glass-input:-webkit-autofill,
+        .dark .glass-input:-webkit-autofill:hover,
+        .dark .glass-input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px rgba(15, 23, 42, 0.98) inset !important;
+            -webkit-text-fill-color: #e2e8f0 !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* Fix number spin buttons in dark mode */
+        .dark .glass-input[type='number']::-webkit-inner-spin-button,
+        .dark .glass-input[type='number']::-webkit-outer-spin-button {
+            filter: invert(0.85) brightness(2);
+        }
+
+        /* Fix select option background in dark mode */
+        .dark select.glass-input option {
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+
+        /* Placeholder colors */
+        .glass-input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        .dark .glass-input::placeholder {
+            color: #64748b !important;
+        }
+
+        /* --- Primary button --- */
+        .glass-btn-primary {
+            background: linear-gradient(135deg, #1773cf 0%, #1c85ea 100%);
+            box-shadow: 0 4px 15px rgba(23, 115, 207, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .glass-btn-primary:hover::before {
+            left: 100%;
+        }
+
+        /* --- Result cards --- */
+        .result-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.12);
+        }
+
+        .result-danger {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(244, 63, 94, 0.05));
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            box-shadow: 0 4px 20px rgba(244, 63, 94, 0.12);
+        }
+
+        .result-error-card {
+            background: linear-gradient(135deg, rgba(100, 116, 139, 0.15), rgba(100, 116, 139, 0.05));
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(100, 116, 139, 0.25);
+        }
+
+        /* --- Subtle grid background --- */
+        .subtle-grid {
+            background-color: #f0f4f8;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(213, 86%, 56%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(280, 86%, 56%, 0.15) 0px, transparent 50%),
+                radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px;
+        }
+
+        .dark .subtle-grid {
+            background-color: #0f172a;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(213, 86%, 56%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(280, 86%, 56%, 0.10) 0px, transparent 50%),
+                radial-gradient(circle, #1e293b 1px, transparent 1px);
+        }
+
+        /* --- Probability bar animation --- */
+        .prob-bar-fill {
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* --- Custom radio styling --- */
+        .radio-pill input[type="radio"]:checked~.radio-label {
+            background: white;
+            color: #1773cf;
+            font-weight: 700;
+        }
+
+        .dark .radio-pill input[type="radio"]:checked~.radio-label {
+            background: #334155;
+            color: #4aa0f5;
+        }
+
+        /* --- Gender toggle --- */
+        .gender-tab.active {
+            background: white;
+            color: #1773cf;
+            font-weight: 700;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .dark .gender-tab.active {
+            background: #334155;
+            color: #4aa0f5;
+        }
+
+        /* --- Spinner --- */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.55s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* --- Result slide-in --- */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.45s ease forwards;
+        }
+    </style>
+    <script>
+        /* Theme persistence */
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme:dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        function toggleTheme() {
+            const d = document.documentElement;
+            if (d.classList.contains('dark')) { d.classList.remove('dark'); localStorage.theme = 'light'; }
+            else { d.classList.add('dark'); localStorage.theme = 'dark'; }
+        }
+    </script>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
+
+    <!-- ─── Nav ──────────────────────────────────────────────── -->
+    <nav class="sticky top-0 z-50 glass-panel border-b-0 px-6 py-4 mb-2">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="bg-gradient-to-br from-primary to-primary-glow p-2.5 rounded-xl text-white shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined">health_metrics</span>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    MediPulse<span class="text-primary">AI</span>
+                </h1>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a class="text-sm font-semibold text-slate-800 dark:text-white hover:text-primary transition-colors"
+                    href="#">Analyzer</a>
+                <a class="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    href="#">Case Studies</a>
+                <a class="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
+                    href="#">Documentation</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <!-- Dark mode toggle -->
+                <button aria-label="Toggle Dark Mode"
+                    class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-600 dark:text-slate-300"
+                    onclick="toggleTheme()">
+                    <span class="material-symbols-outlined dark:hidden">light_mode</span>
+                    <span class="material-symbols-outlined hidden dark:inline">dark_mode</span>
+                </button>
+
+                <div class="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+
+                {% if current_user.is_authenticated %}
+                <!-- Logged-in: history link + avatar + username + logout -->
+                <a href="/history" class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
+                          text-slate-600 dark:text-slate-300
+                          hover:bg-primary/10 hover:text-primary dark:hover:text-primary-glow
+                          transition-all">
+                    <span class="material-symbols-outlined text-base">history</span>
+                    History
+                </a>
+                <div class="flex items-center gap-2.5">
+                    <div class="h-9 w-9 rounded-full bg-gradient-to-br from-primary to-primary-glow
+                                flex items-center justify-center text-white font-bold text-sm
+                                border-2 border-white dark:border-slate-800 shadow-sm shadow-primary/30">
+                        {{ current_user.username[0].upper() }}
+                    </div>
+                    <span class="hidden md:block text-sm font-semibold text-slate-700 dark:text-slate-200">
+                        {{ current_user.username }}
+                    </span>
+                </div>
+                <a href="/logout" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold
+                          text-slate-600 dark:text-slate-300
+                          hover:bg-accent-warning/10 hover:text-accent-warning
+                          dark:hover:bg-accent-warning/10 dark:hover:text-accent-warning
+                          transition-all border border-transparent hover:border-accent-warning/30">
+                    <span class="material-symbols-outlined text-base">logout</span>
+                    <span class="hidden md:inline">Logout</span>
+                </a>
+
+                {% else %}
+                <!-- Guest: Sign In + Sign Up -->
+                <a href="/register" class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-semibold
+                          text-primary border border-primary/30 hover:bg-primary/5 transition-all">
+                    <span class="material-symbols-outlined text-base">person_add</span>
+                    Sign Up
+                </a>
+                <a href="/login" class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold
+                          text-white glass-btn-primary transition-all hover:-translate-y-0.5">
+                    <span class="material-symbols-outlined text-base">login</span>
+                    Sign In
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- ─── Main ──────────────────────────────────────────────── -->
+    <main class="flex-1 subtle-grid relative px-4 py-12 md:py-20 overflow-hidden">
+        <!-- background blobs -->
+        <div
+            class="absolute top-20 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] -z-10 mix-blend-multiply dark:mix-blend-screen animate-pulse duration-[5000ms]">
+        </div>
+        <div
+            class="absolute bottom-40 right-10 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-[120px] -z-10 mix-blend-multiply dark:mix-blend-screen">
+        </div>
+
+        <div class="max-w-4xl mx-auto relative z-10">
+
+            <!-- Hero text -->
+            <div class="text-center mb-12">
+                <span
+                    class="inline-flex items-center gap-1 py-1.5 px-4 rounded-full glass-panel text-primary text-xs font-bold uppercase tracking-wider mb-5 shadow-glass-sm border-white/50">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                    Diagnostic Tool v2.4
+                </span>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4 tracking-tight">
+                    <span
+                        class="bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+                        Diabetes Risk Analysis
+                    </span>
+                </h2>
+                <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                    Our clinical intelligence system processes patient metrics to provide instant risk assessment and
+                    preventive insights.
+                </p>
+            </div>
+
+            <!-- ─── Card ──────────────────────────────────────── -->
+            <div class="glass-panel rounded-3xl overflow-hidden transition-all duration-300">
+                <div class="p-8 md:p-10">
+
+                    <form action="/predict" method="post" id="diagForm">
+
+                        <!-- ─── Section 1: Patient Demographics ─── -->
+                        <div>
+                            <div class="flex items-center gap-3 mb-8">
+                                <div class="bg-primary/10 p-2 rounded-lg">
+                                    <span class="material-symbols-outlined text-primary">person</span>
+                                </div>
+                                <h3 class="font-bold text-xl text-slate-800 dark:text-white">Patient Demographics</h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+
+                                <!-- Gender toggle (sends hidden value) -->
+                                <div>
+                                    <label
+                                        class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 ml-1">Gender</label>
+                                    <div class="grid grid-cols-3 gap-2 glass-input p-1.5 rounded-xl" id="genderToggle">
+                                        <button class="gender-tab active py-2.5 px-4 rounded-lg text-sm transition-all"
+                                            type="button" data-val="Male">Male</button>
+                                        <button
+                                            class="gender-tab       py-2.5 px-4 rounded-lg text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 transition-colors"
+                                            type="button" data-val="Female">Female</button>
+                                        <button
+                                            class="gender-tab       py-2.5 px-4 rounded-lg text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 transition-colors"
+                                            type="button" data-val="Other">Other</button>
+                                    </div>
+                                    <input type="hidden" name="gender" id="genderVal" value="Male">
+                                </div>
+
+                                <!-- Age -->
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 ml-1"
+                                        for="age">Age (years)</label>
+                                    <input class="w-full rounded-xl glass-input px-5 py-3" id="age" name="age"
+                                        placeholder="e.g. 45" type="number" min="1" max="120" required>
+                                </div>
+
+                                <!-- Smoking History -->
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 ml-1"
+                                        for="smoking_history">Smoking History</label>
+                                    <div class="relative">
+                                        <select
+                                            class="w-full rounded-xl glass-input px-5 py-3 appearance-none cursor-pointer"
+                                            id="smoking_history" name="smoking_history" required>
+                                            <option value="" disabled selected>Select…</option>
+                                            <option value="No Info">No Information</option>
+                                            <option value="never">Never Smoked</option>
+                                            <option value="former">Former Smoker</option>
+                                            <option value="current">Current Smoker</option>
+                                            <option value="ever">Ever Smoked</option>
+                                            <option value="not current">Not Current Smoker</option>
+                                        </select>
+                                        <div
+                                            class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
+                                            <span class="material-symbols-outlined text-sm">expand_more</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- BMI -->
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 ml-1"
+                                        for="bmi">BMI (Body Mass Index)</label>
+                                    <input class="w-full rounded-xl glass-input px-5 py-3" id="bmi" name="bmi"
+                                        placeholder="e.g. 24.5" type="number" step="0.01" min="10" max="70" required>
+                                </div>
+
+                            </div>
+                        </div><!-- /Demographics -->
+
+                        <!-- Divider -->
+                        <div
+                            class="h-px my-10 bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent">
+                        </div>
+
+                        <!-- ─── Section 2: Clinical Indicators ─── -->
+                        <div>
+                            <div class="flex items-center gap-3 mb-8">
+                                <div class="bg-primary/10 p-2 rounded-lg">
+                                    <span class="material-symbols-outlined text-primary">biotech</span>
+                                </div>
+                                <h3 class="font-bold text-xl text-slate-800 dark:text-white">Clinical Indicators</h3>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+
+                                <!-- Left column: radio groups -->
+                                <div class="space-y-6">
+
+                                    <!-- Hypertension -->
+                                    <div class="glass-input rounded-xl p-4">
+                                        <label
+                                            class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">Hypertension
+                                            History</label>
+                                        <div class="flex gap-6">
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <div class="relative flex items-center">
+                                                    <input class="peer sr-only" name="hypertension" type="radio"
+                                                        value="1">
+                                                    <div
+                                                        class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-500 peer-checked:border-primary peer-checked:bg-primary transition-all">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Yes</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <div class="relative flex items-center">
+                                                    <input checked class="peer sr-only" name="hypertension" type="radio"
+                                                        value="0">
+                                                    <div
+                                                        class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-500 peer-checked:border-primary peer-checked:bg-primary transition-all">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">No</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Heart Disease -->
+                                    <div class="glass-input rounded-xl p-4">
+                                        <label
+                                            class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3">Heart
+                                            Disease History</label>
+                                        <div class="flex gap-6">
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <div class="relative flex items-center">
+                                                    <input class="peer sr-only" name="heart_disease" type="radio"
+                                                        value="1">
+                                                    <div
+                                                        class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-500 peer-checked:border-primary peer-checked:bg-primary transition-all">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">Yes</span>
+                                            </label>
+                                            <label class="flex items-center gap-2 cursor-pointer group">
+                                                <div class="relative flex items-center">
+                                                    <input checked class="peer sr-only" name="heart_disease"
+                                                        type="radio" value="0">
+                                                    <div
+                                                        class="w-5 h-5 rounded-full border-2 border-slate-300 dark:border-slate-500 peer-checked:border-primary peer-checked:bg-primary transition-all">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">No</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                </div><!-- /left col -->
+
+                                <!-- Right column: numeric inputs -->
+                                <div class="space-y-6">
+
+                                    <!-- HbA1c -->
+                                    <div>
+                                        <label
+                                            class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 ml-1"
+                                            for="HbA1c_level">HbA1c Level (%)</label>
+                                        <div class="relative">
+                                            <input class="w-full rounded-xl glass-input px-5 py-3" id="HbA1c_level"
+                                                name="HbA1c_level" placeholder="e.g. 5.7" type="number" step="0.1"
+                                                min="3" max="15" required>
+                                            <div class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                                                <span class="material-symbols-outlined text-base">info</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Blood Glucose -->
+                                    <div>
+                                        <label
+                                            class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 ml-1"
+                                            for="blood_glucose_level">Blood Glucose Level (mg/dL)</label>
+                                        <input class="w-full rounded-xl glass-input px-5 py-3" id="blood_glucose_level"
+                                            name="blood_glucose_level" placeholder="e.g. 95" type="number" step="1"
+                                            min="50" max="400" required>
+                                    </div>
+
+                                </div><!-- /right col -->
+
+                            </div>
+                        </div><!-- /Clinical Indicators -->
+
+                        <!-- ─── Submit button ─── -->
+                        <div class="pt-8">
+                            <button
+                                class="w-full glass-btn-primary text-white font-bold text-lg py-4 rounded-xl transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3 group"
+                                type="submit" id="submitBtn">
+                                <span class="material-symbols-outlined group-hover:animate-pulse">analytics</span>
+                                Run Diagnostic Analysis
+                            </button>
+                        </div>
+
+                    </form>
+
+                    <!-- ─── Result Section ─── -->
+                    {% if prediction_text %}
+                    <div id="resultSection" class="mt-0 slide-in">
+
+                        {% if result_type == 'not_diabetic' %}
+                        <!-- GREEN: Healthy -->
+                        <div class="result-success p-8 border-t-0 rounded-b-3xl -mx-8 md:-mx-10 -mb-10">
+                            <div class="flex flex-col md:flex-row items-center gap-6">
+                                <div
+                                    class="bg-white/40 dark:bg-black/20 p-4 rounded-full text-accent-success shadow-inner backdrop-blur-sm">
+                                    <span class="material-symbols-outlined text-5xl">check_circle</span>
+                                </div>
+                                <div class="flex-1 text-center md:text-left">
+                                    <h4 class="text-2xl font-bold text-emerald-900 dark:text-emerald-100 mb-2">Analysis:
+                                        Low Risk</h4>
+                                    <p class="text-emerald-800/80 dark:text-emerald-200/80 font-medium">
+                                        The clinical markers provided indicate a low risk profile for diabetes.
+                                        Regular screening and a balanced lifestyle are recommended.
+                                    </p>
+                                    {% if probability is defined %}
+                                    <div class="mt-4">
+                                        <div
+                                            class="flex justify-between text-xs font-semibold text-emerald-700 dark:text-emerald-300 mb-1">
+                                            <span>Diabetes Risk Score</span><span>{{ probability }}%</span>
+                                        </div>
+                                        <div
+                                            class="w-full h-2.5 bg-emerald-200/50 dark:bg-emerald-900/40 rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-600 prob-bar-fill"
+                                                style="width:{{ probability }}%"></div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% elif result_type == 'diabetic' %}
+                        <!-- RED: High Risk -->
+                        <div class="result-danger p-8 border-t-0 rounded-b-3xl -mx-8 md:-mx-10 -mb-10">
+                            <div class="flex flex-col md:flex-row items-center gap-6">
+                                <div
+                                    class="bg-white/40 dark:bg-black/20 p-4 rounded-full text-accent-warning shadow-inner backdrop-blur-sm">
+                                    <span class="material-symbols-outlined text-5xl">warning</span>
+                                </div>
+                                <div class="flex-1 text-center md:text-left">
+                                    <h4 class="text-2xl font-bold text-rose-900 dark:text-rose-100 mb-2">Analysis: High
+                                        Risk</h4>
+                                    <p class="text-rose-800/80 dark:text-rose-200/80 font-medium">
+                                        The clinical markers indicate an elevated risk for diabetes.
+                                        Please consult a healthcare professional for a thorough evaluation.
+                                    </p>
+                                    {% if probability is defined %}
+                                    <div class="mt-4">
+                                        <div
+                                            class="flex justify-between text-xs font-semibold text-rose-700 dark:text-rose-300 mb-1">
+                                            <span>Diabetes Risk Score</span><span>{{ probability }}%</span>
+                                        </div>
+                                        <div
+                                            class="w-full h-2.5 bg-rose-200/50 dark:bg-rose-900/40 rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full bg-gradient-to-r from-orange-400 to-rose-600 prob-bar-fill"
+                                                style="width:{{ probability }}%"></div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        {% else %}
+                        <!-- Error -->
+                        <div class="result-error-card p-6 -mx-8 md:-mx-10 -mb-10">
+                            <p class="text-slate-700 dark:text-slate-300 font-medium text-center">{{ prediction_text }}
+                            </p>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                    {% endif %}
+
+                </div><!-- /card inner -->
+            </div><!-- /card -->
+
+            <!-- ─── Feature pills ─── -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-6 rounded-2xl hover:bg-white/40 transition-colors">
+                    <span class="material-symbols-outlined text-primary mb-3 text-3xl">shield</span>
+                    <h5 class="font-bold mb-2 text-slate-800 dark:text-white">HIPAA Compliant</h5>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Your data is processed securely and is never
+                        stored on our servers.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl hover:bg-white/40 transition-colors">
+                    <span class="material-symbols-outlined text-primary mb-3 text-3xl">clinical_notes</span>
+                    <h5 class="font-bold mb-2 text-slate-800 dark:text-white">Evidence Based</h5>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Trained on over 100,000 validated clinical
+                        records for maximum accuracy.</p>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl hover:bg-white/40 transition-colors">
+                    <span class="material-symbols-outlined text-primary mb-3 text-3xl">update</span>
+                    <h5 class="font-bold mb-2 text-slate-800 dark:text-white">Real-time Analysis</h5>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Instant results powered by high-performance
+                        neural network models.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- ─── Footer ──────────────────────────────────────────── -->
+    <footer
+        class="bg-white/80 dark:bg-slate-950/80 backdrop-blur-md py-10 border-t border-slate-200 dark:border-slate-800 px-6 mt-auto">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2 opacity-50">
+                <span class="material-symbols-outlined">medical_services</span>
+                <span class="text-sm font-semibold tracking-tight uppercase">MediPulse AI Platform</span>
+            </div>
+            <div class="flex gap-6 text-sm text-slate-400">
+                <a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+                <a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+                <a class="hover:text-primary transition-colors" href="#">Cookie Policy</a>
+            </div>
+            <p class="text-sm text-slate-400">© 2025 MediPulse AI. For informational purposes only.</p>
+        </div>
+    </footer>
+
+    <script>
+        /* ── Gender toggle ── */
+        const genderBtns = document.querySelectorAll('.gender-tab');
+        const genderInput = document.getElementById('genderVal');
+        genderBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                genderBtns.forEach(b => {
+                    b.classList.remove('active');
+                    b.classList.add('text-slate-500', 'dark:text-slate-400', 'font-medium');
+                });
+                btn.classList.add('active');
+                btn.classList.remove('text-slate-500', 'dark:text-slate-400', 'font-medium');
+                genderInput.value = btn.dataset.val;
+            });
+        });
+
+        /* ── Submit → loading state ── */
+        document.getElementById('diagForm').addEventListener('submit', function () {
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Analyzing…';
+        });
+
+        /* ── Animate prob bar ── */
+        document.querySelectorAll('.prob-bar-fill').forEach(bar => {
+            const target = bar.style.width;
+            bar.style.width = '0';
+            requestAnimationFrame(() => requestAnimationFrame(() => { bar.style.width = target; }));
+        });
+
+        /* ── Scroll to result ── */
+        const rs = document.getElementById('resultSection');
+        if (rs) rs.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    </script>
+</body>
+
+</html>

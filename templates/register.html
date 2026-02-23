@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MediPulseAI — Create Account</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1773cf",
+                        "primary-glow": "#4aa0f5",
+                        "background-light": "#f0f4f8",
+                        "background-dark": "#0f172a",
+                        "accent-warning": "#f43f5e",
+                        "accent-success": "#10b981",
+                    },
+                    fontFamily: { "display": ["Manrope", "sans-serif"] },
+                }
+            }
+        }
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme:dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        function toggleTheme() {
+            const d = document.documentElement;
+            if (d.classList.contains('dark')) { d.classList.remove('dark'); localStorage.theme = 'light'; }
+            else { d.classList.add('dark'); localStorage.theme = 'dark'; }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
+        }
+
+        .dark .glass-panel {
+            background: rgba(17, 25, 33, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.10);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+            color: #1e293b !important;
+            color-scheme: light;
+        }
+
+        .dark .glass-input {
+            background: rgba(15, 23, 42, 0.85) !important;
+            border: 1px solid rgba(255, 255, 255, 0.15) !important;
+            color: #e2e8f0 !important;
+            color-scheme: dark;
+        }
+
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 0 0 2px rgba(23, 115, 207, 0.25);
+            outline: none;
+            color: #0f172a !important;
+        }
+
+        .dark .glass-input:focus {
+            background: rgba(15, 23, 60, 0.98) !important;
+            color: #f1f5f9 !important;
+            box-shadow: 0 0 0 2px rgba(74, 160, 245, 0.45) !important;
+        }
+
+        .glass-input::placeholder {
+            color: #94a3b8 !important;
+        }
+
+        .dark .glass-input::placeholder {
+            color: #64748b !important;
+        }
+
+        .glass-btn-primary {
+            background: linear-gradient(135deg, #1773cf 0%, #1c85ea 100%);
+            box-shadow: 0 4px 15px rgba(23, 115, 207, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .glass-btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .subtle-grid {
+            background-color: #f0f4f8;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(213, 86%, 56%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(280, 86%, 56%, 0.15) 0px, transparent 50%),
+                radial-gradient(circle, #cbd5e1 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px;
+        }
+
+        .dark .subtle-grid {
+            background-color: #0f172a;
+            background-image:
+                radial-gradient(at 0% 0%, hsla(213, 86%, 56%, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, hsla(280, 86%, 56%, 0.10) 0px, transparent 50%),
+                radial-gradient(circle, #1e293b 1px, transparent 1px);
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-up {
+            animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0)
+            }
+
+            20%,
+            60% {
+                transform: translateX(-6px)
+            }
+
+            40%,
+            80% {
+                transform: translateX(6px)
+            }
+        }
+
+        .shake {
+            animation: shake 0.4s ease;
+        }
+
+        /* Password strength bar */
+        .strength-bar {
+            transition: width 0.4s ease, background-color 0.4s ease;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-display transition-colors duration-300">
+
+    <!-- Nav -->
+    <nav class="sticky top-0 z-50 glass-panel border-b-0 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3">
+                <div
+                    class="bg-gradient-to-br from-primary to-primary-glow p-2.5 rounded-xl text-white shadow-lg shadow-primary/20">
+                    <span class="material-symbols-outlined">health_metrics</span>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    MediPulse<span class="text-primary">AI</span>
+                </span>
+            </a>
+            <button aria-label="Toggle Dark Mode"
+                class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-600 dark:text-slate-300"
+                onclick="toggleTheme()">
+                <span class="material-symbols-outlined dark:hidden">light_mode</span>
+                <span class="material-symbols-outlined hidden dark:inline">dark_mode</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="flex-1 subtle-grid relative flex items-center justify-center px-4 py-16 overflow-hidden">
+        <div class="absolute top-10 left-10 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-10 right-10 w-80 h-80 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none">
+        </div>
+
+        <div class="w-full max-w-md fade-up relative z-10">
+
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div
+                    class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary to-primary-glow rounded-2xl text-white shadow-xl shadow-primary/30 mb-4">
+                    <span class="material-symbols-outlined text-3xl">person_add</span>
+                </div>
+                <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-1">Create Account
+                </h1>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">
+                    Join <span class="font-bold">MediPulse<span class="text-primary">AI</span></span> — it's optional
+                    and free
+                </p>
+            </div>
+
+            <!-- Glass card -->
+            <div class="glass-panel rounded-3xl p-8">
+
+                <!-- Error -->
+                {% if error %}
+                <div
+                    class="flex items-center gap-2 mb-6 px-4 py-3 rounded-xl bg-accent-warning/10 border border-accent-warning/30 text-accent-warning text-sm font-medium shake">
+                    <span class="material-symbols-outlined text-base">error</span>
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form action="/register" method="post" id="registerForm">
+
+                    <!-- Username -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 ml-1"
+                            for="username">
+                            Username
+                        </label>
+                        <div class="relative">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg pointer-events-none">person</span>
+                            <input class="w-full rounded-xl glass-input pl-11 pr-5 py-3 text-sm" id="username"
+                                name="username" type="text" placeholder="Choose a username (min 3 chars)"
+                                value="{{ request.form.get('username', '') }}" autocomplete="username" required>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-4">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 ml-1"
+                            for="password">
+                            Password
+                        </label>
+                        <div class="relative">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg pointer-events-none">lock</span>
+                            <input class="w-full rounded-xl glass-input pl-11 pr-12 py-3 text-sm" id="password"
+                                name="password" type="password" placeholder="Min 6 characters"
+                                autocomplete="new-password" required oninput="updateStrength(this.value)">
+                            <button type="button" onclick="togglePwd('password','eye1')"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-lg" id="eye1">visibility</span>
+                            </button>
+                        </div>
+                        <!-- Strength bar -->
+                        <div class="mt-2 h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                            <div id="strengthBar" class="strength-bar h-full rounded-full w-0 bg-slate-400"></div>
+                        </div>
+                        <p id="strengthLabel" class="text-xs text-slate-400 mt-1 ml-1"></p>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="mb-7">
+                        <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2 ml-1"
+                            for="password2">
+                            Confirm Password
+                        </label>
+                        <div class="relative">
+                            <span
+                                class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-lg pointer-events-none">lock_reset</span>
+                            <input class="w-full rounded-xl glass-input pl-11 pr-12 py-3 text-sm" id="password2"
+                                name="password2" type="password" placeholder="Repeat your password"
+                                autocomplete="new-password" required>
+                            <button type="button" onclick="togglePwd('password2','eye2')"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors">
+                                <span class="material-symbols-outlined text-lg" id="eye2">visibility</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit" id="signUpBtn"
+                        class="w-full glass-btn-primary text-white font-bold text-base py-3.5 rounded-xl transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-lg">person_add</span>
+                        Create Account
+                    </button>
+
+                </form>
+
+                <!-- Divider -->
+                <div class="flex items-center gap-3 my-6">
+                    <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                    <span class="text-xs text-slate-400 font-medium">Already have an account?</span>
+                    <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+                </div>
+
+                <!-- Sign in link -->
+                <a href="/login" class="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold
+                text-primary border border-primary/30 hover:bg-primary/5 transition-all">
+                    <span class="material-symbols-outlined text-base">login</span>
+                    Sign In Instead
+                </a>
+            </div>
+
+            <p class="text-center text-xs text-slate-400 dark:text-slate-500 mt-6">
+                Registration is optional — you can use the analyzer without an account.
+            </p>
+        </div>
+    </main>
+
+    <script>
+        function togglePwd(inputId, iconId) {
+            const inp = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            const show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            icon.textContent = show ? 'visibility_off' : 'visibility';
+        }
+
+        function updateStrength(val) {
+            const bar = document.getElementById('strengthBar');
+            const label = document.getElementById('strengthLabel');
+            let score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const levels = [
+                { w: '0%', color: '', text: '' },
+                { w: '25%', color: 'bg-red-500', text: 'Weak' },
+                { w: '50%', color: 'bg-orange-400', text: 'Fair' },
+                { w: '75%', color: 'bg-yellow-400', text: 'Good' },
+                { w: '100%', color: 'bg-emerald-500', text: 'Strong' },
+            ];
+            const lvl = levels[Math.min(score, 4)];
+            bar.className = `strength-bar h-full rounded-full ${lvl.color}`;
+            bar.style.width = lvl.w;
+            label.textContent = lvl.text;
+            label.className = `text-xs mt-1 ml-1 ${score <= 1 ? 'text-red-500' : score === 2 ? 'text-orange-400' : score === 3 ? 'text-yellow-500' : 'text-emerald-500'}`;
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', function () {
+            const btn = document.getElementById('signUpBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> Creating…';
+        });
+    </script>
+</body>
+
+</html>
